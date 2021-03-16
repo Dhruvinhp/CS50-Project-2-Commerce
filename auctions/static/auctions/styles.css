@@ -1,0 +1,16 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#overflow {
+    overflow: auto;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 16px; 
+    max-height: 49px;
+    margin-bottom: 10px;
+    -webkit-line-clamp: 3; /* Write the number of 
+                              lines you want to be 
+                              displayed */
+    -webkit-box-orient: vertical;
+}

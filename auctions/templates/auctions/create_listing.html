@@ -1,0 +1,54 @@
+{% extends 'auctions/layout.html' %}
+
+{% block title %}
+    Create
+{% endblock %}
+
+{% block three %} active {% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row my-3 justify-content-center">
+        <div class="col-lg-6">
+            {% include 'auctions/message.html' %}
+            <form action="{% url 'create_listing' %}" method="POST" autocomplete="off">
+                {% csrf_token %}
+                <small class="text-muted"><strong>Title (required), Maximum 70 characters</strong></small>
+                <div class="input-group mb-3">
+                    {{ form.title }}
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="inputGroupSelect01">Category</label>
+                    </div>
+                    {{ form.category }}
+                </div>
+            
+                <small class="text-muted"><strong>Starting bid (required), greater than 0 but less than Rs.99,99,999</strong></small>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <label class="input-group-text" for="inputGroupSelect01">Rs.</label>
+                    </div>
+                      {{ form.min_bid }}
+                      <div class="input-group-append">
+                        <label class="input-group-text" for="inputGroupSelect01">.00</label>
+                    </div>
+                </div>
+
+                <small class="text-muted"><strong>Description (required), maximum 900 characters.</strong></small>
+                <div class="input-group mb-3">
+                    {{ form.description}}
+                </div>
+            
+                <small class="text-muted"><strong>Image URL (optional)</strong></small>
+                <div class="input-group mb-3">
+                    {{ form.image_url }}
+                </div>
+                
+                <button type="submit" class="btn btn-block btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+  </div>
+{% endblock %}

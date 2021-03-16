@@ -1,0 +1,72 @@
+{% extends "auctions/layout.html" %}
+
+{% load static %}
+
+{% block one %} active {% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row">
+            {% include 'auctions/message.html'%}
+            {% for item in listing %}
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="card mb-4 d-flex flex-wrap align-items-stretch">
+                        <!-- Images are optional, display it if we have one. -->
+                        {% if item.image_url %}
+                            <a href="{% url 'listing' item.id %}">
+                                <img height="300px" class="card-img-top p-3" src="{{ item.image_url }}" alt="{{ item.title }}">
+                            </a>
+                        {% endif %}
+                        <div class="card-body" style="min-width: 18rem">
+                            <h4 class="card-text text-info">{{ item.title }}</h4>
+                            <!--  When there are no bids display minimum bid as starting price -->
+                            Current Price: 
+                            <span class="text-success ">
+                                {% if item.top_bid is not None %}
+                                    <strong>Rs.{{ item.top_bid.bid }}.00</strong>
+                                {% else %}
+                                    Rs.{{ item.min_bid }}
+                                {% endif %}
+                            </span> <br>
+                            <span>Starting Price: Rs.{{ item.min_bid }}</span><br>
+                            <small class="text-muted">Category: {{ item.get_category_display }}, created {{ item.timestamp }} by {{ item.owner }}</small>
+                            <div class="card-text mb-3" id="overflow" style="height: 100px;"><small>{{ item.description |safe }}</small></div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <!-- This Listing button is redundant on the Listing page, so hide it. -->
+                                    {% if '/listing' not in request.path %}
+                                        <a href="{% url 'listing' item.id %}" class="btn btn-sm btn-outline-secondary">View</a>
+                                    {% endif %}
+                                    <!-- Watchlist feature is only available if user is logged in -->
+                                    {% if request.user.is_authenticated %}
+                                        {% if item in watchlist or watchlist_flag is not None %}
+                                            <form method="post" action="{% url 'remove_watchlist' %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="listing_id" value="{{ item.id }}"/>
+                                                <button type="submit" class="btn btn-info btn-sm ml-1"><i class="fa fa-eye" aria-hidden="true"></i>
+                                                    <span>Remove Watchlist</span></button>
+                                            </form>
+                                        {% else %}
+                                            <form method="post" action="{% url 'add_watchlist' %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="listing_id" value="{{ item.id }}"/>
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-secondary ml-1">Add Watchlist
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                        {% if item.status == item.CLOSED %}   <!-- Closed listing indicator  -->
+                                            <a href="{% url 'listing' item.id %}" class="btn btn-warning btn-sm ml-1">
+                                                <strong class="mr-2 ml-2">Closed</strong>
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>    
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
